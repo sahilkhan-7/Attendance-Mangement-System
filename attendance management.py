@@ -3,7 +3,7 @@ import random
 from string import ascii_uppercase as uppercase
 from string import digits
 import time
-
+from tabulate import tabulate
 
 
 # Function for the user/faculty to sign up
@@ -192,16 +192,29 @@ def mark_attendance():
         writer.writeheader()
         writer.writerows(attendance_data)            
 
+
+
+def read_attendance(file_path):
+    attendance_data = []
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            reader = csv.reader(f)
+            for row in reader:
+                attendance_data.append(row)
+    return attendance_data
+
 def view_attendance():
+    os.system('cls' if os.name == 'nt' else 'clear')
     attendance_file = "Projects list\\Attendance Management system\\attendance.csv"
-    if not os.path.exists(attendance_file) or os.stat(attendance_file).st_size == 0:
+    
+    attendance_data = read_attendance(attendance_file)
+    
+    if not attendance_data:
         print("No attendance data found.")
         return
-
-    with open(attendance_file, "r") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            print(row)
+    
+    # Print the attendance data in tabular format
+    print(tabulate(attendance_data[1:], headers=attendance_data[0], tablefmt="grid"))
 
 # First page of the program
 def welcome():
@@ -244,7 +257,7 @@ def main_menu():
     match choice:
         case "1":
             mark_attendance()
-            os.system('cls' if os.name == 'nt' else 'clear')
+            print("Press any key to go back to the main menu: ")
             main_menu()
             
         case "2":
@@ -255,7 +268,6 @@ def main_menu():
             
         case "3":
             add_student()
-            os.system('cls' if os.name == 'nt' else 'clear')
             main_menu()
             
         case "4":
@@ -263,7 +275,6 @@ def main_menu():
             time.sleep(2)
             print("Attendance data saved successfully!")
             print("Here is the file path: Projects list\\Attendance Management system\\attendance.csv")
-            os.system('cls' if os.name == 'nt' else 'clear')
             main_menu()
             
         case "5":
